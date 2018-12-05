@@ -46,6 +46,7 @@
                     <div style="height: 50px; width: 100%; display: table-cell; vertical-align: middle;">
                         <span style="margin-left: 20px; font-size: 17px;">抽取个数：</span>
                         <input-number :max="numMax" :min="1" v-model="num"></input-number>
+                        <i-button type="text" @click="restHandle">重置</i-button>
                     </div>
                 </i-col>
             </row>
@@ -80,7 +81,8 @@ new Vue({
                 name: [
                     { required: true, message: '请输入企业名称', trigger: 'blur' }
                 ]
-            }
+            },
+            handleNum: 0,
         }
     },
     computed: {
@@ -134,6 +136,7 @@ new Vue({
                 return ;
             }
 
+            this.handleNum = this.handleNum + 1;
             this.isSelect = false;
 
             this.randomUser();
@@ -166,23 +169,28 @@ new Vue({
         },
         endHandle(){
             let _t = this;
-            $.ajax({
-                url:'/handle?num=' + _t.num,
-                method:"get",
-                success:function(data){
-                    let yesUser = data.result;
+            if( this.handleNum < 3 ){
+                clearInterval(_t.stratIndex);
+                _t.isSelect = true;
+            } else {
+                $.ajax({
+                    url:'/handle?num=' + _t.num,
+                    method:"get",
+                    success:function(data){
+                        let yesUser = data.result;
 
-                    clearInterval(_t.stratIndex);
-                    _t.isSelect = true;
+                        clearInterval(_t.stratIndex);
+                        _t.isSelect = true;
 
-                    _t.userList.forEach( user =>  user.class = 'card_ed' );
-                    _t.userList.forEach( user =>  {
-                        if( $.inArray(user.name, yesUser) != -1 ){
-                            user.class = 'card_ing';
-                        }
-                    });
-                }
-            });
+                        _t.userList.forEach( user =>  user.class = 'card_ed' );
+                        _t.userList.forEach( user =>  {
+                            if( $.inArray(user.name, yesUser) != -1 ){
+                                user.class = 'card_ing';
+                            }
+                        });
+                    }
+                });
+            }
         },
         deleteHandle(name){
             let _t = this;
@@ -190,6 +198,18 @@ new Vue({
                 url:'/delete?name=' + name,
                 method:"get",
                 success:function(data){
+                    _t.initList();
+                }
+            });
+        },
+        restHandle(){
+            let _t = this;
+            $.ajax({
+                url:'/deleteAll',
+                method:"get",
+                success:function(data){
+                    _t.handleNum = 0;
+                    _t.num = 1;
                     _t.initList();
                 }
             });

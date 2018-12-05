@@ -16,4 +16,8 @@
         update user set state = 'Yes' where name = #{name}
     </update>
 
+    <delete id="deleteAll">
+        DELETE FROM user
+    </delete>
+
 </mapper>

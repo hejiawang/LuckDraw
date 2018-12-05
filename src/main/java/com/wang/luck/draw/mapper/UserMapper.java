@@ -9,4 +9,6 @@ public interface UserMapper extends BaseMapper<User> {
     int updateForNo();
 
     int updateForYes(@Param("name") String name);
+
+    int deleteAll();
 }

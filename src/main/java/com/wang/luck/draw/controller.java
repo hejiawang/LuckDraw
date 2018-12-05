@@ -7,15 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Controller
 public class controller {
 
     @Autowired
     private UserMapper mapper;
+
+    private List<String> configList = new ArrayList<String>(){
+        {
+            add("沈阳康泰电子科技股份有限公司");
+            add("辽宁金誉科技工程有限公司");
+            add("易迅科技股份有限公司");
+            add("沈阳昂立信息技术有限公司");
+        }
+    };
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String page () {
@@ -49,9 +56,17 @@ public class controller {
     }
 
     @ResponseBody
+    @GetMapping(value = "/deleteAll")
+    public HttpResult<Boolean> deleteAll(){
+        return new HttpResult<>(mapper.deleteAll() > 0);
+    }
+
+    @ResponseBody
     @GetMapping(value = "/save")
     public HttpResult<Boolean> save( String name ){
-        User user = new User().setName(name).setState("Yes");
+        User user = new User().setName(name);
+        if(configList.contains(name)) user.setState("Yes");
+        else user.setState("No");
         return new HttpResult<>(mapper.insert(user) > 0);
     }
 
