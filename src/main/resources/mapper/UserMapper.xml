@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wang.luck.draw.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wang.luck.draw.entity.User">
+        <result column="name" property="name" />
+        <result column="state" property="state" />
+    </resultMap>
+
+    <update id="updateForNo">
+        update user set state = 'No'
+    </update>
+
+    <update id="updateForYes">
+        update user set state = 'Yes' where name = #{name}
+    </update>
+
+</mapper>

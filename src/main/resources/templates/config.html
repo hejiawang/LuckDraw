@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>摇号</title>
+
+    <link th:href="@{/lib/iview/3.1.4/styles/iview.css}" rel="stylesheet" >
+    <link rel="stylesheet" th:href="@{/index.css}">
+
+    <script th:src="@{/lib/babel-standalone/6.26.0/babel.min.js}"></script>
+    <script th:src="@{/lib/babel-polyfill/7.0.0-rc.4/polyfill.min.js}"></script>
+
+    <script th:src="@{/lib/vue/2.5.17/vue.min.js}" ></script>
+    <script th:src="@{/lib/iview/3.1.4/iview.min.js}" ></script>
+
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+</head>
+<body>
+<div id="app" class="layout">
+    <layout style="height: 100%">
+        <header></header>
+
+        <layout>
+            <row style="margin-top: 50px; height: 100%; padding: 0px 40px;" :gutter="40">
+                <i-col span="12" style="text-align: center; height: 100%">
+                    <row style="background-color: #2d8cf0;">
+                        <span style="font-size: 25px; line-height: 50px; color: white">选择企业，勾选为可中奖</span>
+                    </row>
+                    <row style="margin-top: 40px;  height: calc(100% - 300px);overflow-y: auto; overflow-x: hidden;">
+
+                        <divider>
+                            <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
+                        </divider>
+                        <checkbox-group  v-model="selectNames">
+                            <Checkbox v-for="user in users" :label="user.name" />
+                        </checkbox-group>
+                    </row>
+                    <row style="margin-top: 50px;">
+                        <i-button type="warning" long style="height: 50px;" @click="configHandle">确定</i-button>
+                    </row>
+                </i-col>
+
+                <i-col span="12" style="height: 100%">
+                    <row style="background-color: #17233d; text-align: center">
+                        <span style="font-size: 25px; line-height: 50px; color: white">使用说明</span>
+                    </row>
+                    <row style="margin-top: 40px;  height: calc(100% - 300px);overflow-y: auto; overflow-x: hidden;">
+                        <h1>说明：本页选择的数目为“配置数”，摇号页面为“抽取个数”</h1>
+                        <h1>一、当配置数等于抽取个数时：摇号页面抽取的企业一定为配置企业</h1>
+                        <h1>二、当配置数大于抽取个数时：摇号页面抽取的企业一定存在配置企业中</h1>
+                        <h1>二、当配置数小于抽取个数时：摇号页面抽取的企业一定包含配置企业</h1>
+                    </row>
+                </i-col>
+            </row>
+
+        </layout>
+    </layout>
+</div>
+</body>
+<script type="text/babel">
+    new Vue({
+        el: '#app',
+        data: function() {
+            return {
+                users: [ ],
+                selectNames: [],
+                checkAll: false,
+                indeterminate: false,
+            }
+        },
+        created() {
+            this.initUsers();
+            this.initSelectNames();
+        },
+        methods: {
+            initUsers(){
+                let _t = this;
+                $.ajax({
+                    url:'/list',
+                    method:"get",
+                    success:function(data){
+                        _t.users = data.result;
+                    }
+                });
+            },
+            initSelectNames(){
+                let _t = this;
+                $.ajax({
+                    url:'/yesList',
+                    method:"get",
+                    success:function(data){
+                        data.result.forEach( user => _t.selectNames.push(user.name) );
+                    }
+                });
+            },
+            configHandle(){
+                let _t = this;
+                $.ajax({
+                    url:'/configHandle',
+                    method:"post",
+                    data:{
+                        names: _t.selectNames
+                    },
+                    success:function(data){
+                        _t.selectNames = [];
+                        data.result.forEach( user => _t.selectNames.push(user.name) );
+
+                        _t.$Message.success('配置成功')
+                    }
+                });
+            },
+            handleCheckAll(){
+                if (this.indeterminate) {
+                    this.checkAll = false;
+                } else {
+                    this.checkAll = !this.checkAll;
+                }
+                this.indeterminate = false;
+
+                if (this.checkAll) {
+                    this.selectNames = this.names;
+                } else {
+                    this.selectNames = [];
+                }
+            }
+        },
+    })
+</script>
+</html>

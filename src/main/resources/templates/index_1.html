@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>摇号</title>
+    <link th:href="@{/lib/iview/3.1.4/styles/iview.css}" rel="stylesheet" >
+    <link rel="stylesheet" th:href="@{/index.css}">
+
+    <script th:src="@{/lib/babel-standalone/6.26.0/babel.min.js}"></script>
+    <script th:src="@{/lib/babel-polyfill/7.0.0-rc.4/polyfill.min.js}"></script>
+
+    <script th:src="@{/lib/vue/2.5.17/vue.min.js}" ></script>
+    <script th:src="@{/lib/iview/3.1.4/iview.min.js}" ></script>
+
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+</head>
+<body>
+<div id="app" class="layout">
+    <layout style="height: 100%">
+        <header>
+            <span style="line-height: 60px; color: red; font-size: 40px; letter-spacing: 20px; text-shadow: 5px 2px 5px #676a6c;">
+                公平 &nbsp;&nbsp;&nbsp;&nbsp; 公正 &nbsp;&nbsp;&nbsp;&nbsp; 公开
+            </span>
+        </header>
+
+        <layout>
+            <row style="margin-top: 50px; height: 100%">
+                <i-col span="8" offset="8" style="height: 100%;">
+                    <row :gutter="16" style="background-color: #2d8cf0; text-align: center; ">
+                        <i-col span="18">
+                            <span style="font-size: 25px; line-height: 50px; color: white">参与企业</span>
+                        </i-col>
+                        <i-col span="6" style="padding: 0px;">
+                            <i-button type="success" long style="height: 50px;" @click="raiseHandle">添加企业</i-button>
+                        </i-col>
+                    </row>
+                    <row style="height: calc(100% - 250px);overflow-y: auto; overflow-x: hidden;">
+                        <row v-for="name in names" style="text-align: center; margin-top: 20px;" :gutter="16">
+                            <i-col span="18">
+                                <span style="font-size: 25px; line-height: 50px; color: #17233d">{{name}}</span>
+                            </i-col>
+                            <i-col span="6" style="padding: 0px;">
+                                <i-button type="text" long style="height: 50px;"><Icon type="ios-trash-outline" size="25"/></i-button>
+                            </i-col>
+                        </row>
+                    </row>
+                    <row style="margin-top: 50px;">
+                        <i-button type="warning" long style="height: 50px;" @click="startHandle">开始抽奖</i-button>
+                    </row>
+                </i-col>
+            </row>
+        </layout>
+
+        <modal v-model="isShowRaise" title="新增参与企业" @on-ok="ok" @on-cancel="cancel" :styles="{'top':'30%'}">
+            <i-form ref="nameForm" :model="nameForm" :rules="nameRules" :label-width="90">
+                <form-item label="企业名称" prop="name">
+                    <i-input type="text" v-model="nameForm.name" />
+                </form-item>
+            </i-form>
+        </modal>
+
+        <modal v-model="isShowStart" title="正在选择" :styles="{'top':'20%'}" width="800" @on-cancel="cancelStart">
+            <div style="text-align:center; height: 300px">
+                <span style="font-size: 50px; color: #19be6b; line-height: 300px;">{{sName}}</span>
+            </div>
+            <div slot="footer">
+                <i-button v-if="isSelect" type="error" long @click="endHandle">停</i-button>
+                <i-button v-else type="warning" long @click="startHandle">重新开始</i-button>
+            </div>
+        </modal>
+    </layout>
+</div>
+</body>
+<script type="text/babel">
+new Vue({
+    el: '#app',
+    data: function() {
+        return {
+            names: [
+                '沈阳信息电子科技股份有限公司', '辽宁体育胸肌科技股份有限公司', '北京那你呢哦科技股份有限公司',
+                '沈阳信息电子科技', '辽宁体育胸肌科技', '北京啥你呢哦'
+            ],
+            sName: '',
+            isShowRaise: false,
+            isShowStart: false,
+            isSelect: true,
+            stratIndex: null,
+            nameForm: {name: ''},
+            nameRules: {
+                name: [
+                    { required: true, message: '请输入企业名称', trigger: 'blur' }
+                ]
+            }
+        }
+    },
+    created() {
+        $.ajax({
+            url:'/list',
+            method:"get",
+            success:function(data){
+                console.info(data);
+            }
+        });
+    },
+    methods: {
+        raiseHandle(){
+            this.isShowRaise = true;
+        },
+        ok(){
+
+        },
+        cancel(){
+
+        },
+        startHandle(){
+            this.isSelect = true;
+
+            this.randomName()
+
+            let _t = this;
+            this.stratIndex = setInterval(function() {
+                _t.randomName();
+            }, 20);
+
+            this.isShowStart = true;
+        },
+        randomName(){
+            let num = this.names.length;
+            this.sName = this.names[ Math.floor(Math.random()*num) ] ;
+        },
+        endHandle(){
+            clearInterval(this.stratIndex);
+            this.isSelect = false;
+        },
+        cancelStart(){
+            clearInterval(this.stratIndex);
+            this.isSelect = false;
+        }
+    },
+})
+</script>
+</html>

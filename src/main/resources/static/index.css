@@ -1,0 +1,70 @@
+html, body{
+    margin:0;
+    overflow: hidden;
+    height:100%;
+    width: 100%;
+}
+.layout{
+    height: 100%;
+}
+.ivu-layout{
+    height: 100%;
+}
+
+header {
+    height: 60px;
+    background-image: url(/images/title.jpg);
+    background-size: cover;
+    text-align: center;
+}
+
+.ivu-btn{
+    font-size: 23px !important;
+}
+
+.ivu-modal .ivu-btn{
+    font-size: 17px !important;
+}
+
+.ivu-modal-header p, .ivu-modal-header-inner{
+    font-size: 17px !important;
+}
+
+.ivu-form .ivu-form-item-label{
+    font-size: 17px !important;
+}
+
+.ivu-checkbox-group-item{
+    display: block;
+}
+
+.ivu-checkbox-wrapper{
+    font-size: 17px;
+}
+
+.card_ed{
+    width:200px;
+    height: 200px;
+    float: left;
+    margin: 20px;
+    background-color: #e8eaec
+}
+
+.card_ed_span{
+    font-size: 20px;
+    letter-spacing: 10px;
+}
+
+.card_ing{
+    width:200px;
+    height: 200px;
+    float: left;
+    margin: 20px;
+    background-color: #2b85e4
+}
+
+.card_ing_span{
+    font-size: 20px;
+    letter-spacing: 10px;
+    color: white;
+}
