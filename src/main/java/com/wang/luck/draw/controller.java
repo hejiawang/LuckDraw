@@ -59,7 +59,7 @@ public class controller {
     @PostMapping(value = "/configHandle")
     public HttpResult<List<User>> configHandle(@RequestParam(value = "names[]", required=false)List<String> names){
         mapper.updateForNo();
-        names.forEach( name -> mapper.updateForYes(name) );
+        if( names!=null )names.forEach( name -> mapper.updateForYes(name) );
         return new HttpResult<>(this.userYesList());
     }
 
