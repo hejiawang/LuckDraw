@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>摇号</title>
+    <link th:href="@{/lib/iview/3.1.4/styles/iview.css}" rel="stylesheet" >
+    <link rel="stylesheet" th:href="@{/index.css}">
+
+    <script th:src="@{/lib/babel-standalone/6.26.0/babel.min.js}"></script>
+    <script th:src="@{/lib/babel-polyfill/7.0.0-rc.4/polyfill.min.js}"></script>
+
+    <script th:src="@{/lib/vue/2.5.17/vue.min.js}" ></script>
+    <script th:src="@{/lib/iview/3.1.4/iview.min.js}" ></script>
+
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+</head>
+<body>
+<div id="app" class="layout">
+    <layout style="height: 100%">
+        <header>
+            <span style="margin-left: 20px;line-height: 60px; color: white; font-size: 40px; text-shadow: 5px 2px 5px #676a6c;">
+                欢迎使用自动抽签系统
+            </span>
+
+            <span style="float: right;margin-right: 20px; margin-left: 20px;line-height: 60px; font-size: 20px; ">
+                 <i-button type="text" @click="closeW">【退出】</i-button>
+            </span>
+            <span style="float: right;margin-right: 20px; margin-left: 20px;line-height: 60px; color: red; font-size: 40px; letter-spacing: 20px; text-shadow: 5px 2px 5px #676a6c;">
+                公平 &nbsp; 公正 &nbsp; 公开
+            </span>
+
+        </header>
+
+        <layout>
+            <row class="content-detail">
+                <Card :class="user.class" v-for="user in userList">
+                    <div style="text-align:center;width:166px; height: 135px;display:table-cell;vertical-align:middle;">
+                        <span :class="user.class + '_span'">{{user.name}}</span>
+                    </div>
+                    <i-button type="text" long size="small" @click="deleteHandle(user.name)"><Icon type="ios-trash-outline"/></i-button>
+                </Card>
+            </row>
+            <row>
+                <i-col span="8" offset="8">
+                    <row :gutter="20">
+                        <i-col span="12"><i-button type="success" long style="height: 50px;" @click="raiseHandle">增加</i-button></i-col>
+                        <i-col span="12">
+                            <i-button v-if="isSelect" type="warning" long style="height: 50px;" @click="startHandle">开始</i-button>
+                            <i-button v-else type="error" long style="height: 50px;" @click="endHandle">结束</i-button>
+                        </i-col>
+                    </row>
+                </i-col>
+                <i-col span="8" >
+                    <div style="height: 50px; width: 100%; display: table-cell; vertical-align: middle;">
+                        <span style="margin-left: 20px; font-size: 17px;">抽取个数：</span>
+                        <input-number :max="numMax" :min="1" v-model="num"></input-number>
+
+                    </div>
+                </i-col>
+            </row>
+        </layout>
+
+        <modal v-model="isShowRaise" title="新增" @on-ok="ok" @on-cancel="cancel" :loading="isLoading" :styles="{'top':'30%'}">
+            <i-form ref="userForm" :model="userForm" :rules="userRules" :label-width="90" @submit.native.prevent>
+                <form-item label="名称" prop="name">
+                    <i-input type="text" v-model="userForm.name" />
+                </form-item>
+            </i-form>
+        </modal>
+
+    </layout>
+</div>
+</body>
+<script type="text/babel">
+new Vue({
+    el: '#app',
+    data: function() {
+        return {
+            userList: [ ],
+            sName: '',
+            num: 1,
+            isLoading: true,
+            isShowRaise: false,
+            isShowStart: false,
+            isSelect: true,
+            stratIndex: null,
+            userForm: {name: ''},
+            userRules: {
+                name: [
+                    { required: true, message: '请输入企业名称', trigger: 'blur' }
+                ]
+            }
+        }
+    },
+    computed: {
+        numMax: function () {
+            if( this.userList == null || this.userList.length == 0 ) return 1;
+            else return this.userList.length;
+        }
+    },
+    created() {
+        this.restHandle();
+    },
+    methods: {
+        initList(){
+            this.userList = [];
+        },
+        raiseHandle(){
+            this.isShowRaise = true;
+        },
+        ok(){
+            let _t = this;
+            this.$refs.userForm.validate((valid) => {
+                if (valid) {
+                    this.userList.push({name: this.userForm.name, class: 'card_ed' })
+                    this.cancel();
+
+                } else {
+                    _t.isLoading = false;
+                    _t.$nextTick(() => {_t.isLoading = true;});
+                }
+            })
+        },
+        cancel(){
+            this.$refs.userForm.resetFields()
+            this.isShowRaise = false;
+        },
+        startHandle(){
+            if( this.userList == null || this.userList.length == 0 ){
+                return ;
+            }
+
+            this.handleNum = this.handleNum + 1;
+            this.isSelect = false;
+
+            this.randomUser();
+            let _t = this;
+            this.stratIndex = setInterval(function() {
+                _t.randomUser();
+            }, 80);
+        },
+        randomUser(){
+            this.userList.forEach( user =>  user.class = 'card_ed' );
+            let numArry = this.randomNum();
+            numArry.forEach(num => {
+                this.userList[num].class = 'card_ing';
+            });
+        },
+        randomNum(){
+            let numArry = [];
+            let userLength = this.userList.length;
+
+            $(new Array( this.num )).each(function(index){
+                let rNum = 0;
+                do {
+                    rNum = Math.floor( Math.random() * userLength );
+                } while ( $.inArray(rNum, numArry) != -1 );
+
+                numArry.push(rNum);
+            });
+
+            return numArry;
+        },
+        endHandle(){
+            clearInterval(this.stratIndex);
+            this.isSelect = true;
+        },
+        deleteHandle(name){
+            let _t = this;
+            let userListIndex = null;
+            $(new Array( this.userList.length )).each(function(index){
+                if( _t.userList[index].name == name ){
+                    userListIndex = index;
+                }
+            });
+
+            if( userListIndex != null ){
+                _t.userList.splice(userListIndex, 1);
+            }
+        },
+        restHandle(){
+            this.num = 1;
+            this.initList();
+        },
+        closeW(){
+            window.close();
+        }
+    }
+})
+</script>
+</html>
