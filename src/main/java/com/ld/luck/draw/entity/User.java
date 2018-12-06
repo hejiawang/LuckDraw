@@ -1,4 +1,4 @@
-package com.wang.luck.draw.entity;
+package com.ld.luck.draw.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

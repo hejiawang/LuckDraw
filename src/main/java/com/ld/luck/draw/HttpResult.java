@@ -1,4 +1,4 @@
-package com.wang.luck.draw;
+package com.ld.luck.draw;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

@@ -1,7 +1,7 @@
-package com.wang.luck.draw.mapper;
+package com.ld.luck.draw.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.wang.luck.draw.entity.User;
+import com.ld.luck.draw.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper extends BaseMapper<User> {

@@ -1,8 +1,8 @@
-package com.wang.luck.draw;
+package com.ld.luck.draw;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.wang.luck.draw.entity.User;
-import com.wang.luck.draw.mapper.UserMapper;
+import com.ld.luck.draw.entity.User;
+import com.ld.luck.draw.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

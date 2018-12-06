@@ -7,4 +7,4 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  typeAliasesPackage: com.wang.luck.draw.entity #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.ld.luck.draw.entity #实体扫描，多个package用逗号或者分号分隔

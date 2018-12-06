@@ -13,9 +13,7 @@ html, body{
 
 header {
     height: 60px;
-    background-image: url(/images/title.jpg);
-    background-size: cover;
-    text-align: center;
+    background: #2b85e4;
 }
 
 .ivu-btn{
@@ -67,4 +65,24 @@ header {
     font-size: 20px;
     letter-spacing: 10px;
     color: white;
+}
+
+.l-footer{
+    position: absolute;
+    bottom: 0px;
+    height: 30px;
+    background: #dcdee2;
+    left: 0px;
+    right: 0px;
+    color: #17233d;
+    font-size: 14px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.content-detail{
+    height: calc(100% - 100px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    /*background-image: url(/images/w.png);*/
 }
