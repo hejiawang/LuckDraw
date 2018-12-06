@@ -17,10 +17,10 @@ public class controller {
 
     private List<String> configList = new ArrayList<String>(){
         {
-            add("沈阳康泰电子科技股份有限公司");
-            add("辽宁金誉科技工程有限公司");
-            add("易迅科技股份有限公司");
-            add("沈阳昂立信息技术有限公司");
+            add("123");
+            add("1234");
+            add("12345");
+            add("123456");
         }
     };
 
