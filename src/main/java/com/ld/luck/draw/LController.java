@@ -16,4 +16,9 @@ public class LController {
     public String page () {
         return "indexL";
     }
+
+    @RequestMapping(value = "/indexD", method = RequestMethod.GET)
+    public String pageD () {
+        return "indexD";
+    }
 }

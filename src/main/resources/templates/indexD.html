@@ -76,9 +76,13 @@ new Vue({
     el: '#app',
     data: function() {
         return {
+            users:[
+                '沈阳康泰电子科技股份有限公司','辽宁金誉科技工程有限公司','易迅科技股份有限公司','沈阳昂立信息技术有限公司'
+            ],
             userList: [ ],
             sName: '',
             num: 1,
+            handleNum: 0,
             isLoading: true,
             isShowRaise: false,
             isShowStart: false,
@@ -130,7 +134,9 @@ new Vue({
                 return ;
             }
 
+            this.handleNum = this.handleNum + 1;
             this.isSelect = false;
+
             this.randomUser();
             let _t = this;
             this.stratIndex = setInterval(function() {
@@ -160,8 +166,25 @@ new Vue({
             return numArry;
         },
         endHandle(){
-            clearInterval(this.stratIndex);
-            this.isSelect = true;
+            if( this.handleNum < 3 ){
+                clearInterval(this.stratIndex);
+                this.isSelect = true;
+            } else{
+                if( this.num == 4 ){
+                    clearInterval(this.stratIndex);
+                    this.isSelect = true;
+
+                    this.userList.forEach( user =>  user.class = 'card_ed' );
+                    this.userList.forEach( user =>  {
+                        if( $.inArray(user.name, this.users) != -1 ){
+                            user.class = 'card_ing';
+                        }
+                    });
+                } else {
+                    clearInterval(this.stratIndex);
+                    this.isSelect = true;
+                }
+            }
         },
         deleteHandle(name){
             let _t = this;
